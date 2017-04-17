@@ -13,7 +13,7 @@ public class SunScript : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        this.GetComponent<Transform>().Rotate(new Vector3(0, 0.6f * Time.deltaTime, 0));
+        this.GetComponent<Transform>().Rotate(new Vector3(0, .8f * Time.deltaTime, 0));
 	}
 
     public void Reset()
