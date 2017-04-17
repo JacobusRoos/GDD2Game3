@@ -4,12 +4,20 @@ using UnityEngine;
 
 public class SunScript : MonoBehaviour {
 
-	// Use this for initialization
-	void Start () {
-	}
+    private Quaternion originalRotation;
+
+    // Use this for initialization
+    void Start() {
+        originalRotation = this.GetComponent<Transform>().rotation;
+    }
 	
 	// Update is called once per frame
 	void Update () {
-        this.GetComponent<Transform>().Rotate(new Vector3(0, 10 * Time.deltaTime, 0));
+        this.GetComponent<Transform>().Rotate(new Vector3(0, 0.6f * Time.deltaTime, 0));
 	}
+
+    public void Reset()
+    {
+        this.GetComponent<Transform>().rotation = originalRotation;
+    }
 }
