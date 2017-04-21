@@ -1,0 +1,15 @@
+S
+Hello
+Test Hello
+T
+Hello t
+true
+false
+F
+Hello f
+true
+false
+Y
+hello y
+true
+false

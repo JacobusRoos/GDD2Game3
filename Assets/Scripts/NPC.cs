@@ -6,7 +6,7 @@ public class NPC : MonoBehaviour {
 
     public string NPCName;
 
-    private Dictionary<string, KeyValuePair<string, KeyValuePair<string, string>>> dialogue;
+    private Dialogue dialogue;
 
     private int trust;
 
@@ -16,7 +16,7 @@ public class NPC : MonoBehaviour {
 	void Start () {
         NPCName = "";
 
-        dialogue = new Dictionary<string, KeyValuePair<string, KeyValuePair<string, string>>>();
+        dialogue = new Dialogue();
 
         trust = 0;
 
@@ -25,6 +25,8 @@ public class NPC : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		
+        Debug.Log("test");
+
+        dialogue.ParseDialogue("test");
 	}
 }
