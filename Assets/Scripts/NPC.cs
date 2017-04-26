@@ -1,4 +1,5 @@
-﻿using System.Collections;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,6 +12,8 @@ public class NPC : MonoBehaviour {
     private int trust;
 
     private bool yeti;
+    
+    private bool[] predictionStates;
 
 	// Use this for initialization
 	void Start () {
@@ -20,7 +23,7 @@ public class NPC : MonoBehaviour {
 
         trust = 0;
 
-
+        predictionStates = new bool[dialogue.predNum];
 	}
 	
 	// Update is called once per frame
@@ -29,4 +32,28 @@ public class NPC : MonoBehaviour {
 
         dialogue.ParseDialogue("test");
 	}
+    
+    public void RandomizePredictions()
+    {
+        for(int i = 0; i < dialogue.predNum; i++)
+        {
+            predictionState[i] = false;
+        }
+        
+        bool[] assigned = new bool[dialogue.predNum];
+        Random r = new Random();
+        
+        for(int i = 0; i < dialogue.predNum / 2; i++)
+        {
+            int index = r.Next(dialogue.predNum);
+            if(assigned[index])
+            {
+                i--;
+            }
+            else
+            {
+                predictionState[index] = true;
+            }
+        }
+    }
 }
