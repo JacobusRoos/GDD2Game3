@@ -22,7 +22,7 @@ public class NPC : MonoBehaviour {
     
     public int smallIndex;
     public int trueIndex;
-    public int falseindex;
+    public int falseIndex;
     
     private int trustBuffer;
     
@@ -45,7 +45,7 @@ public class NPC : MonoBehaviour {
         givenPredictionNum = 0;
         
         trueIndex = -1;
-        falseindex = -1;
+        falseIndex = -1;
         
         RandomizePredictions();
 	}
@@ -89,7 +89,7 @@ public class NPC : MonoBehaviour {
         
         int r = 0;
         
-        while(!trueFound || !falseFound)
+        while((!trueFound || !falseFound) && givenPredictionNum < 3)
         {
             r = (int)(Random.value * (dialogue.predNum - 1));
             
@@ -102,7 +102,7 @@ public class NPC : MonoBehaviour {
             if(!predictionStates[r] && !predictionsUsed[r])
             {
                 falseFound = true;
-                falseindex = r;
+                falseIndex = r;
             }
         }
         
@@ -116,7 +116,18 @@ public class NPC : MonoBehaviour {
             smallIndex = r;
         }
         
+        
+        
         //Todo: put dialogue in the UI here
+        
+        if(givenPredictionNum >= 3)
+        {
+            
+        }
+        else
+        {
+            
+        }
         
         //NOTE: please update predictionsUsed when a dialogue option is selected so the same one is not used multiple times
         //also increment the givenPredictionNum
