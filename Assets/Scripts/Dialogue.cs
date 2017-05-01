@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,21 +10,19 @@ class Dialogue
 
     enum Type
     {
-        I,
         S,
-        P,
+        T,
+        L,
         Y,
         N
     };
-    
-    public string intro = "";
-    
     //              type                    player      npc      true    false
     public Dictionary<string, KeyValuePair<string, KeyValuePair<string, string>>> convDictionary;
 
-    public int yetiNum = 0;
-    public int predNum = 0;
-    public int smallNum = 0;
+    private int yetiNum = 0;
+    private int trueNum = 0;
+    private int falseNum = 0;
+    private int smallNum = 0;
 
 
 
@@ -47,14 +45,14 @@ class Dialogue
             {
                 switch (line)
                 {
-                    case "I":
-                        t = Type.I;
-                        break;
                     case "S":
                         t = Type.S;
                         break;
-                    case "P":
-                        t = Type.P;
+                    case "T":
+                        t = Type.T;
+                        break;
+                    case "L":
+                        t = Type.L;
                         break;
                     case "Y":
                         t = Type.Y;
@@ -62,9 +60,6 @@ class Dialogue
                     default:
                         switch (t)
                         {
-                            case Type.I:
-                                intro = line;
-                                break;
                             case Type.S:
                                 playerD = line;
                                 npcTrue = reader.ReadLine();
@@ -73,14 +68,23 @@ class Dialogue
                                     new KeyValuePair<string, string>(npcTrue, "ERROR")));
                                 smallNum++;
                                 break;
-                            case Type.P:
+                            case Type.T:
                                 playerD = line;
                                 npcTrue = reader.ReadLine();
                                 npcFalse = reader.ReadLine();
-                                convDictionary.Add("P" + predNum,
+                                convDictionary.Add("T" + trueNum,
                                     new KeyValuePair<string, KeyValuePair<string, string>>(playerD,
                                     new KeyValuePair<string, string>(npcTrue, npcFalse)));
-                                predNum++;
+                                trueNum++;
+                                break;
+                            case Type.L:
+                                playerD = line;
+                                npcTrue = reader.ReadLine();
+                                npcFalse = reader.ReadLine();
+                                convDictionary.Add("F" + falseNum,
+                                    new KeyValuePair<string, KeyValuePair<string, string>>(playerD,
+                                    new KeyValuePair<string, string>(npcTrue, npcFalse)));
+                                falseNum++;
                                 break;
                             case Type.Y:
                                 playerD = line;
