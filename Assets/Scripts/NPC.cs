@@ -16,13 +16,17 @@ public class NPC : MonoBehaviour {
     
     private bool[] predictionsUsed;
     
-    private KeyValuePair<bool, bool>[] givenPredictions;
+    private bool[] smallUsed;
     
     private int givenPredictionNum;
     
     public int smallIndex;
     public int trueIndex;
     public int falseindex;
+    
+    private int trustBuffer;
+    
+    const int trustModifier = 15;
 
 	// Use this for initialization
 	void Start () {
@@ -30,13 +34,13 @@ public class NPC : MonoBehaviour {
 
         dialogue = new Dialogue();
 
-        trust = 0;
+        trust = 20 + (int)(Random.value * 30) ;
 
         predictionStates = new bool[dialogue.predNum];
         
         predictionsUsed = new bool[dialogue.predNum];
         
-        givenPredictions = new KeyValuePair<bool, bool>[3];
+        smallUsed = new bool[dialogue.smallNum];
         
         givenPredictionNum = 0;
         
@@ -83,9 +87,11 @@ public class NPC : MonoBehaviour {
         bool trueFound = false;
         bool falseFound = false;
         
+        int r = 0;
+        
         while(!trueFound || !falseFound)
         {
-            int r = (int)(Random.value * (dialogue.predNum - 1));
+            r = (int)(Random.value * (dialogue.predNum - 1));
             
             if(predictionStates[r] && !predictionsUsed[r])
             {
@@ -102,14 +108,79 @@ public class NPC : MonoBehaviour {
         
         smallIndex = (int)(Random.value * (dialogue.smallNum - 1));
         
+        r = (int)(Random.value * (dialogue.smallNum - 1));
+        
+        while(!smallUsed[r])
+        {
+            smallUsed[r] = false;
+            smallIndex = r;
+        }
+        
         //Todo: put dialogue in the UI here
         
         //NOTE: please update predictionsUsed when a dialogue option is selected so the same one is not used multiple times
-        //also increment the 
+        //also increment the givenPredictionNum
     }
     
     public void NextDay()
     {
+        RandomizePredictions();
         
+        smallUsed = new bool[dialogue.smallNum];
+        
+        givenPredictionNum = 0;
+        
+        trust += trustBuffer;
+        
+        trustBuffer = 0;
+    }
+    
+    public void YetiPrediction()
+    {
+        if((int)(Random.value * 100) <= trust - 30)
+        {
+            yeti = true;
+        }
+        
+        if(yeti)
+        {
+            //UI place NPC response to yeti in UI
+        }
+        else
+        {
+            //UI place NPC response to yeti in UI
+        }
+    }
+    
+    public void TruePrediction()
+    {
+        
+        if((int)(Random.value * 100) <= trust)
+        {
+            trustBuffer += trustModifier;
+        }
+        else
+        {
+            trustBuffer += (int)(trustModifier * .75);
+        }
+    }
+    
+    public void FalsePrediction()
+    {
+        if((int)(Random.value * 100) <= trust)
+        {
+            trustBuffer -= (int)(trustModifier * .75);
+        }
+        else
+        {
+            trustBuffer -= trustModifier;
+        }
+    }
+    
+    public void SmallTalk()
+    {
+        trust += 4;
+        
+        //grab other small data using the smallIndex
     }
 }
