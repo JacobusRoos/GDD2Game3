@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 /// <summary>
@@ -6,80 +6,83 @@ using UnityEngine;
 /// ****Make sure to start game from MainMenu scene.
 /// </summary>
 public class GameManager : MonoBehaviour {
-    
-	SceneChanger sm;
-	enum GameState { mainmenu, play, dialogue, nextDay, results};
+	SceneChanger sc;
+	enum GameState { 
+		mainmenu, 
+		play, 
+		pause 
+	};
 	GameState currentState;
 	GameState lastState;
 
 	[HideInInspector] public GameObject mainCanvas;			// reference to MainCanvas obj
 	[HideInInspector] public GameObject mainEventSystem;	// reference to MainEventSystem obj
 
-	private GameObject mainMenuGroup;		// parent object that holds all objects for mainMenu state/scene
-	private GameObject playStateGroup;		// parent object that holds all objects for play state/scene
-    
-    private GameObject SelectedNPC;
+	// ** Make sure all groups in Canvas are active to start
+	// Turning off and on will be handled in start/update
+	// Must be brought into inspector
+	public GameObject mainMenuGroup;		// parent object that holds all objects for mainMenu state/scene
+	public GameObject playStateGroup;		// parent object that holds all objects for play state/scene
 
-    private Ray ray;
-    private RaycastHit hit;
-    
-    public Camera mainCamera;
-    
+
+
 	// Use this for initialization
 	void Start () {
 		currentState = GameState.mainmenu;
 
 		mainCanvas = GameObject.Find ("MainCanvas");
 		mainEventSystem = GameObject.Find ("MainEventSystem");
-		mainMenuGroup = GameObject.Find ("MainMenuGroup");		// could make a list of the groups if we were to have many more screens and scenes, easier to activate/deactivate
-		playStateGroup = GameObject.Find ("PlayStateGroup");
+
 
 		mainMenuGroup.SetActive (true);
+		playStateGroup.SetActive (false);
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		lastState = currentState;
+		if (currentState != GameState.pause) {		// Pretty much stop updating everything when paused
+			// States ------------------------------------------
+			// MAIN MENU STATE
+			if (currentState == GameState.mainmenu) {
+				// Set cooresponding canvas group to display
+				if (!mainMenuGroup.activeSelf) {
+					mainMenuGroup.SetActive (true);
+				}	
+				if (playStateGroup.activeSelf) {			
+					playStateGroup.SetActive (false);
+				}
+
+				// INPUT HANDLERS------------------------------------
 
 
-		// States ------------------------------------------
-		if (currentState == GameState.mainmenu) {
-			// Set cooresponding canvas group to display
-			if (!mainMenuGroup.activeSelf) {
-				mainMenuGroup.SetActive (true);
-			}	
-			if (playStateGroup.activeSelf) {			//////////////////////////
-				playStateGroup.SetActive (false);
 			}
 
-			// INPUT HANDLERS------------------------------------
+			// PLAY STATE
+			else if (currentState == GameState.play) {
+				if (mainMenuGroup.activeSelf) {
+					mainMenuGroup.SetActive (false);
+				}
 
+				if (!playStateGroup.activeSelf) {
+					playStateGroup.SetActive (true);
+				}
 
+				// INPUT HANDLERS-----------------------------------
+				if (Input.GetMouseButtonDown (0)) {	// AND ALSO CHECK DIALOGUE IS HAPPENING
+					// advance the text
+				} 
+
+				if (Input.GetKeyDown (KeyCode.P)) {
+					ChangeState (2);
+				}
+			}
+		} 
+		else if (currentState == GameState.pause) {
+			// Unpause - go back to last state
+			if (Input.GetKeyDown(KeyCode.P)) {
+				currentState = lastState;
+			}
 		}
-		else if (currentState == GameState.play) {
-			if (mainMenuGroup.activeSelf) {
-				mainMenuGroup.SetActive (false);
-			}
-			if (!playStateGroup.activeSelf) {
-				playStateGroup.SetActive (true);
-			}
-
-			// INPUT HANDLERS-----------------------------------
-			if (Input.GetMouseButtonDown(0)) {	// AND ALSO CHECK DIALOGUE IS HAPPENING
-				// advance the text
-                
-                ray = Camera.main.ViewportPointToRay(new Vector3(.5f, .5f, .5f));
-                
-                //Physics.Raycast(mainCamera.transform.position, mainCamera.transform.forward, hit);
-
-			} 
-		}
-
-        if(currentState == GameState.dialogue)
-        {
-            //enable dialogue UI
-            
-        }
 
 
 		// catch state change
@@ -87,17 +90,20 @@ public class GameManager : MonoBehaviour {
 			Debug.Log ("State changed to: " + currentState);
 		}
 
-
-
+		lastState = currentState;
 	}
 
+	// helper function to change state
 	public void ChangeState(int id) {
 		switch (id) {
-		case 0:
+		case 0:	// mainmenu
 			currentState = GameState.mainmenu;
 			break;
-		case 1:
+		case 1: // play
 			currentState = GameState.play;
+			break;
+		case 2:	// pause
+			currentState = GameState.pause;
 			break;
 		}
 	}
