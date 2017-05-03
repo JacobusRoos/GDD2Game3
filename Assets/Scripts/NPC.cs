@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,22 +11,11 @@ public class NPC : MonoBehaviour {
     private int trust;
 
     private bool yeti;
-    //whether the prediction is true or false for the day
-    private bool[] predictionStates;
-    
-    private bool[] predictionsUsed;
-    
-    private bool[] smallUsed;
-    
-    private int givenPredictionNum;
-    
-    public int smallIndex;
-    public int trueIndex;
-    public int falseIndex;
-    
-    private int trustBuffer;
-    
-    const int trustModifier = 15;
+
+	public List<GameObject> goals;
+	private float dist;
+	private GameObject currentGoal;
+	private int tracker;
 
 	// Use this for initialization
 	void Start () {
@@ -34,164 +23,37 @@ public class NPC : MonoBehaviour {
 
         dialogue = new Dialogue();
 
-        trust = 20 + (int)(Random.value * 30) ;
+        trust = 0;
 
-        predictionStates = new bool[dialogue.predNum];
-        
-        predictionsUsed = new bool[dialogue.predNum];
-        
-        smallUsed = new bool[dialogue.smallNum];
-        
-        givenPredictionNum = 0;
-        
-        trueIndex = -1;
-        falseIndex = -1;
-        
-        RandomizePredictions();
+		dist = 0;
+
+		tracker = 0;
+		//goals = new List<GameObject> ();
+		//goals.AddRange (GameObject.FindGameObjectsWithTag ("Trackers"));
+		currentGoal = goals [0];
+
 	}
 	
 	// Update is called once per frame
 	void Update () {
-        Debug.Log("test");
+        //Debug.Log("test");
 
         dialogue.ParseDialogue("test");
+
+		this.transform.LookAt(currentGoal.transform.position);
+
+		//this.transform.position += this.transform.forward/10;
+		this.transform.position -= (this.transform.position - currentGoal.transform.position).normalized/8;
+
+		dist = Vector3.Distance (currentGoal.transform.position, this.transform.position);
+
+		if (dist <= 8.0f) {
+			//int num = Random.Range (0, goals.Count);
+			tracker++;
+			if (tracker >= goals.Count)
+				tracker =0;
+			currentGoal = goals [tracker];
+			this.transform.LookAt(currentGoal.transform.position);
+		}
 	}
-    
-    public void RandomizePredictions()
-    {
-        for(int i = 0; i < dialogue.predNum; i++)
-        {
-            predictionStates[i] = false;
-            predictionsUsed[i] = false;
-        }
-        
-        bool[] assigned = new bool[dialogue.predNum];
-        
-        for(int i = 0; i < dialogue.predNum / 2; i++)
-        {
-            int index = (int)(Random.value * (dialogue.predNum - 1));
-            
-            if(assigned[index])
-            {
-                i--;
-            }
-            else
-            {
-                predictionStates[index] = true;
-            }
-        }
-    }
-    
-    public void DisplayDialogueOptions()
-    {
-        bool trueFound = false;
-        bool falseFound = false;
-        
-        int r = 0;
-        
-        while((!trueFound || !falseFound) && givenPredictionNum < 3)
-        {
-            r = (int)(Random.value * (dialogue.predNum - 1));
-            
-            if(predictionStates[r] && !predictionsUsed[r])
-            {
-                trueFound = true;
-                trueIndex = r;
-            }
-            
-            if(!predictionStates[r] && !predictionsUsed[r])
-            {
-                falseFound = true;
-                falseIndex = r;
-            }
-        }
-        
-        smallIndex = (int)(Random.value * (dialogue.smallNum - 1));
-        
-        r = (int)(Random.value * (dialogue.smallNum - 1));
-        
-        while(!smallUsed[r])
-        {
-            smallUsed[r] = false;
-            smallIndex = r;
-        }
-        
-        
-        
-        //Todo: put dialogue in the UI here
-        
-        if(givenPredictionNum >= 3)
-        {
-            
-        }
-        else
-        {
-            
-        }
-        
-        //NOTE: please update predictionsUsed when a dialogue option is selected so the same one is not used multiple times
-        //also increment the givenPredictionNum
-    }
-    
-    public void NextDay()
-    {
-        RandomizePredictions();
-        
-        smallUsed = new bool[dialogue.smallNum];
-        
-        givenPredictionNum = 0;
-        
-        trust += trustBuffer;
-        
-        trustBuffer = 0;
-    }
-    
-    public void YetiPrediction()
-    {
-        if((int)(Random.value * 100) <= trust - 30)
-        {
-            yeti = true;
-        }
-        
-        if(yeti)
-        {
-            //UI place NPC response to yeti in UI
-        }
-        else
-        {
-            //UI place NPC response to yeti in UI
-        }
-    }
-    
-    public void TruePrediction()
-    {
-        
-        if((int)(Random.value * 100) <= trust)
-        {
-            trustBuffer += trustModifier;
-        }
-        else
-        {
-            trustBuffer += (int)(trustModifier * .75);
-        }
-    }
-    
-    public void FalsePrediction()
-    {
-        if((int)(Random.value * 100) <= trust)
-        {
-            trustBuffer -= (int)(trustModifier * .75);
-        }
-        else
-        {
-            trustBuffer -= trustModifier;
-        }
-    }
-    
-    public void SmallTalk()
-    {
-        trust += 4;
-        
-        //grab other small data using the smallIndex
-    }
 }
