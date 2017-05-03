@@ -11,6 +11,7 @@ public class NPC : MonoBehaviour {
     private int trust;
 
     private bool yeti;
+	public bool stopped;
 
 	public List<GameObject> goals;
 	private float dist;
@@ -25,11 +26,9 @@ public class NPC : MonoBehaviour {
 
         trust = 0;
 
+		stopped = false;
 		dist = 0;
-
 		tracker = 0;
-		//goals = new List<GameObject> ();
-		//goals.AddRange (GameObject.FindGameObjectsWithTag ("Trackers"));
 		currentGoal = goals [0];
 
 	}
@@ -40,20 +39,26 @@ public class NPC : MonoBehaviour {
 
         dialogue.ParseDialogue("test");
 
-		this.transform.LookAt(currentGoal.transform.position);
-
-		//this.transform.position += this.transform.forward/10;
-		this.transform.position -= (this.transform.position - currentGoal.transform.position).normalized/8;
-
-		dist = Vector3.Distance (currentGoal.transform.position, this.transform.position);
-
-		if (dist <= 8.0f) {
-			//int num = Random.Range (0, goals.Count);
-			tracker++;
-			if (tracker >= goals.Count)
-				tracker =0;
-			currentGoal = goals [tracker];
+		if(!stopped){
 			this.transform.LookAt(currentGoal.transform.position);
+
+			//this.transform.position += this.transform.forward/10;
+			this.transform.position -= (this.transform.position - currentGoal.transform.position).normalized/8;
+
+			dist = Vector3.Distance (currentGoal.transform.position, this.transform.position);
+
+			if (dist <= 8.0f) {
+				//int num = Random.Range (0, goals.Count);
+				tracker++;
+				if (tracker >= goals.Count)
+					tracker =0;
+				currentGoal = goals [tracker];
+				this.transform.LookAt(currentGoal.transform.position);
+			}
 		}
+	}
+
+	public void Interact(){
+		stopped = !stopped;
 	}
 }
