@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 /// <summary>
@@ -6,8 +6,9 @@ using UnityEngine;
 /// ****Make sure to start game from MainMenu scene.
 /// </summary>
 public class GameManager : MonoBehaviour {
+    
 	SceneChanger sm;
-	enum GameState { mainmenu, play };
+	enum GameState { mainmenu, play, dialogue, nextDay, results};
 	GameState currentState;
 	GameState lastState;
 
@@ -16,7 +17,14 @@ public class GameManager : MonoBehaviour {
 
 	private GameObject mainMenuGroup;		// parent object that holds all objects for mainMenu state/scene
 	private GameObject playStateGroup;		// parent object that holds all objects for play state/scene
+    
+    private GameObject SelectedNPC;
 
+    private Ray ray;
+    private RaycastHit hit;
+    
+    public Camera mainCamera;
+    
 	// Use this for initialization
 	void Start () {
 		currentState = GameState.mainmenu;
@@ -59,10 +67,19 @@ public class GameManager : MonoBehaviour {
 			// INPUT HANDLERS-----------------------------------
 			if (Input.GetMouseButtonDown(0)) {	// AND ALSO CHECK DIALOGUE IS HAPPENING
 				// advance the text
+                
+                ray = Camera.main.ViewportPointToRay(new Vector3(.5f, .5f, .5f));
+                
+                //Physics.Raycast(mainCamera.transform.position, mainCamera.transform.forward, hit);
+
 			} 
 		}
 
-
+        if(currentState == GameState.dialogue)
+        {
+            //enable dialogue UI
+            
+        }
 
 
 		// catch state change
