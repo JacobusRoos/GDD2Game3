@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 /// <summary>
@@ -10,7 +10,8 @@ public class GameManager : MonoBehaviour {
 	enum GameState { 
 		mainmenu, 
 		play, 
-		pause 
+		pause,
+        transition
 	};
 	GameState currentState;
 	GameState lastState;
@@ -24,7 +25,9 @@ public class GameManager : MonoBehaviour {
 	public GameObject mainMenuGroup;		// parent object that holds all objects for mainMenu state/scene
 	public GameObject playStateGroup;		// parent object that holds all objects for play state/scene
 
-
+    public List<GameObject> NPCs;
+    
+    private float timer;
 
 	// Use this for initialization
 	void Start () {
@@ -33,7 +36,8 @@ public class GameManager : MonoBehaviour {
 		mainCanvas = GameObject.Find ("MainCanvas");
 		mainEventSystem = GameObject.Find ("MainEventSystem");
 
-
+        timer = 300f;
+        
 		mainMenuGroup.SetActive (true);
 		playStateGroup.SetActive (false);
 	}
@@ -59,6 +63,16 @@ public class GameManager : MonoBehaviour {
 
 			// PLAY STATE
 			else if (currentState == GameState.play) {
+                
+                timer -= Time.deltaTime;
+                
+                //update UI timer
+                
+                if(timer <= 0)
+                {
+                    NextDay();
+                }
+                
 				if (mainMenuGroup.activeSelf) {
 					mainMenuGroup.SetActive (false);
 				}
@@ -92,6 +106,14 @@ public class GameManager : MonoBehaviour {
 
 		lastState = currentState;
 	}
+    
+    private void NextDay()
+    {
+        for(int i = 0; i < NPCs.Count; i++)
+        {
+            NPCs[i].GetComponent<NPC>().
+        }
+    }
 
 	// helper function to change state
 	public void ChangeState(int id) {
