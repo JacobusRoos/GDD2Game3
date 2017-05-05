@@ -11,7 +11,8 @@ public class GameManager : MonoBehaviour {
 		mainmenu, 
 		play, 
 		pause,
-        transition
+        transition,
+        results
 	};
 	GameState currentState;
 	GameState lastState;
@@ -113,6 +114,8 @@ public class GameManager : MonoBehaviour {
         {
             NPCs[i].GetComponent<NPC>().NextDay();
         }
+        
+        timer = 300f;
     }
 
 	// helper function to change state
