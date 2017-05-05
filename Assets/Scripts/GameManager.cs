@@ -111,7 +111,7 @@ public class GameManager : MonoBehaviour {
     {
         for(int i = 0; i < NPCs.Count; i++)
         {
-            NPCs[i].GetComponent<NPC>().
+            NPCs[i].GetComponent<NPC>().NextDay();
         }
     }
 
