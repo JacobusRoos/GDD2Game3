@@ -1,0 +1,25 @@
+I
+Hello!  Hopefully the weather will be nice this season to help the crops.
+S
+Who are you?
+I'm the farmer around these parts, growing crops to sell and animals.
+What kind of crops do you raise
+potatoes, corn, carrots, cabbage, and a little squash
+What kind of animals do you keep.
+Cows and pigs, some chickens, a couple sheep, and my trust dog fred.
+Is it just you on the farm.
+No, my lovely wife is with me, she does work in the house while i'm out in the field.
+P
+It will rain tomorrow
+Oh, there will?  I’ll be sure to bring inside the animals to keep them out of the rain.
+Are you sure about that? I haven’t seen any clouds at all today and none of the animals are acting like it will rain.
+It will be sunny tomorrow
+Excellent! Good to hear that we will have good weather tomorrow!
+I saw some clouds on the horizon today. Are you sure that it won’t rain tomorrow?
+The cows will give a lot of milk tomorrow
+Fantastic, I'll be able to free up time on sunday for the chickens
+Now hold on, I've milked cows every sunday all my life, I don't see a reason to change now
+Y
+player line
+Oh god! I’ll be sure to be on the look-out for it.  Thank you for the warning.
+Hahaha! That’s funny! Everyone knows that the yeti’s haven’t been seen in years though.
