@@ -17,7 +17,7 @@ class Dialogue
         N
     };
     
-    public string intro;
+    public string intro = "";
     
     //              type                    player      npc      true    false
     public Dictionary<string, KeyValuePair<string, KeyValuePair<string, string>>> convDictionary;

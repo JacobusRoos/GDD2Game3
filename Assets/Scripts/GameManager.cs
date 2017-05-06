@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 /// <summary>
@@ -10,37 +10,34 @@ public class GameManager : MonoBehaviour {
 	enum GameState { 
 		mainmenu, 
 		play, 
-		pause,
-        transition,
-        results
+		pause 
 	};
 	GameState currentState;
 	GameState lastState;
 
-	[HideInInspector] public GameObject mainCanvas;			// reference to MainCanvas obj
-	[HideInInspector] public GameObject mainEventSystem;	// reference to MainEventSystem obj
+	//[HideInInspector] public GameObject mainCanvas;			// reference to MainCanvas obj
+	//[HideInInspector] public GameObject mainEventSystem;	// reference to MainEventSystem obj
 
-	// ** Make sure all groups in Canvas are active to start
+	// ** Make sure all groups in Canvas are active to start and dragged into inspector
 	// Turning off and on will be handled in start/update
 	// Must be brought into inspector
-	public GameObject mainMenuGroup;		// parent object that holds all objects for mainMenu state/scene
-	public GameObject playStateGroup;		// parent object that holds all objects for play state/scene
+	public GameObject mainMenuGroup;
+	public GameObject playStateGroup;	
+	public GameObject textOptionsGroup;
 
-    public List<GameObject> NPCs;
-    
-    private float timer;
+
 
 	// Use this for initialization
 	void Start () {
 		currentState = GameState.mainmenu;
 
-		mainCanvas = GameObject.Find ("MainCanvas");
-		mainEventSystem = GameObject.Find ("MainEventSystem");
+		//mainCanvas = GameObject.Find ("MainCanvas");
+		//mainEventSystem = GameObject.Find ("MainEventSystem");
 
-        timer = 300f;
-        
+		// activate only mainmenu to start
 		mainMenuGroup.SetActive (true);
 		playStateGroup.SetActive (false);
+		textOptionsGroup.SetActive (false);
 	}
 	
 	// Update is called once per frame
@@ -64,16 +61,6 @@ public class GameManager : MonoBehaviour {
 
 			// PLAY STATE
 			else if (currentState == GameState.play) {
-                
-                timer -= Time.deltaTime;
-                
-                //update UI timer
-                
-                if(timer <= 0)
-                {
-                    NextDay();
-                }
-                
 				if (mainMenuGroup.activeSelf) {
 					mainMenuGroup.SetActive (false);
 				}
@@ -90,33 +77,25 @@ public class GameManager : MonoBehaviour {
 				if (Input.GetKeyDown (KeyCode.P)) {
 					ChangeState (2);
 				}
+
+				// DO RAYCASTING AND DIALOGUE TRIGGERING HERE
 			}
 		} 
 		else if (currentState == GameState.pause) {
 			// Unpause - go back to last state
 			if (Input.GetKeyDown(KeyCode.P)) {
-				currentState = lastState;
+				ChangeState(1);	// default to play 
 			}
 		}
 
 
-		// catch state change
+		// Debug: catch state change
 		if (lastState != currentState) {
 			Debug.Log ("State changed to: " + currentState);
 		}
 
 		lastState = currentState;
 	}
-    
-    private void NextDay()
-    {
-        for(int i = 0; i < NPCs.Count; i++)
-        {
-            NPCs[i].GetComponent<NPC>().NextDay();
-        }
-        
-        timer = 300f;
-    }
 
 	// helper function to change state
 	public void ChangeState(int id) {
