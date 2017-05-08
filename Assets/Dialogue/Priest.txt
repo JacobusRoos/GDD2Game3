@@ -1,0 +1,23 @@
+I
+May the lord be with you son. I'm the father of this town
+S
+Are you on the only priest in the area?
+Yes. There aren't too many people, so it's not difficult to help them all
+What do you do?
+Lead everyone in prayer, offer my advices in the ways of god, and give sermons to those who will listen
+What's your best piece of advice.
+Love others the way you love yourself and be granted happiness forever.
+P
+There will be many people gathered in the town center tomorrow
+I've been planning a big sermon for a couple days now, this sounds like an excellent day to give it!
+I have a lot to do tomorrow, and I'm sorry but your claim sounds dubious.
+A miracle will happen tomorrow in town
+I always thank the lord for the little gifts he gives, i'll be sure to alert the others
+The lord works in mysterious ways, and usually not so....announced in advanced. Where did you hear this information?
+Many people will want spiritual advice tomorrow.
+I'll have to start preparing then. Thank you, it's nice to get a head start for once
+When the people need advice they will come to me. I can't waste my time on strange sounding claims of days not yet here
+Y
+player line
+Oh dear a yeti! I must help the people get out, they will be scared, but I will reassure them!
+A yeti? They would not dare approach this town. They fear the word of god most of all.
