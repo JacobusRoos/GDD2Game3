@@ -27,8 +27,20 @@ public class GameManager : MonoBehaviour {
 	public GameObject playStateGroup;		// parent object that holds all objects for play state/scene
 
     public List<GameObject> NPCs;
+    public GameObject player;
     
     private float timer;
+
+    private float transitionTimer;
+    
+    
+    private GameObject SelectedNPC;
+    
+    private Ray ray;
+    private RaycastHit hit;
+    
+    public Camera mainCamera;
+    
 
 	// Use this for initialization
 	void Start () {
@@ -38,6 +50,8 @@ public class GameManager : MonoBehaviour {
 		mainEventSystem = GameObject.Find ("MainEventSystem");
 
         timer = 300f;
+        
+        transitionTimer = 5f;
         
 		mainMenuGroup.SetActive (true);
 		playStateGroup.SetActive (false);
@@ -85,6 +99,18 @@ public class GameManager : MonoBehaviour {
 				// INPUT HANDLERS-----------------------------------
 				if (Input.GetMouseButtonDown (0)) {	// AND ALSO CHECK DIALOGUE IS HAPPENING
 					// advance the text
+                    
+                    ray = mainCamera.ViewportPointToRay(new Vector3(.5f, .5f, .5f));
+                    
+                    Vector3 loc = mainCamera.transform.position;
+                    
+                    if(Physics.Raycast(mainCamera.transform.position, mainCamera.transform.forward, out hit))
+                    {
+                        if(hit.transform.gameObject.tag == "NPC")
+                        {
+                            Debug.Log("NPChit");
+                        }
+                    }
 				} 
 
 				if (Input.GetKeyDown (KeyCode.P)) {
@@ -99,6 +125,18 @@ public class GameManager : MonoBehaviour {
 			}
 		}
 
+        
+        if(currentState == GameState.transition)
+        {
+            transitionTimer--;
+            
+            //enable transition UI
+            
+            if(transitionTimer <= 0)
+            {
+                currentState = GameState.play;
+            }
+        }
 
 		// catch state change
 		if (lastState != currentState) {
@@ -115,7 +153,11 @@ public class GameManager : MonoBehaviour {
             NPCs[i].GetComponent<NPC>().NextDay();
         }
         
+        player.GetComponent<PlayerController>().Reset();
+        
         timer = 300f;
+        
+        currentState = GameState.transition;
     }
 
 	// helper function to change state

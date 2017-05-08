@@ -61,6 +61,8 @@ public class NPC : MonoBehaviour {
 		tracker = 0;
 		currentGoal = goals[0];
         
+        dialogue.ParseDialogue(NPCName);
+        
         RandomizePredictions();
 	}
 	
@@ -68,7 +70,7 @@ public class NPC : MonoBehaviour {
 	void Update () {
         //Debug.Log("test");
 
-        dialogue.ParseDialogue("test");
+        
 
 		if(!stopped){
 			this.transform.LookAt(currentGoal.transform.position);
