@@ -44,7 +44,7 @@ public class GameManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		currentState = GameState.mainmenu;
+		currentState = GameState.play;
 
 		mainCanvas = GameObject.Find ("MainCanvas");
 		mainEventSystem = GameObject.Find ("MainEventSystem");
@@ -60,6 +60,8 @@ public class GameManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if (currentState != GameState.pause) {		// Pretty much stop updating everything when paused
+            
+            
 			// States ------------------------------------------
 			// MAIN MENU STATE
 			if (currentState == GameState.mainmenu) {
@@ -77,9 +79,10 @@ public class GameManager : MonoBehaviour {
 			}
 
 			// PLAY STATE
-			else if (currentState == GameState.play) {
+			if (currentState == GameState.play) {
                 
                 timer -= Time.deltaTime;
+                
                 
                 //update UI timer
                 
@@ -87,6 +90,24 @@ public class GameManager : MonoBehaviour {
                 {
                     NextDay();
                 }
+                
+                if (Input.GetMouseButtonDown(0)) {	// AND ALSO CHECK DIALOGUE IS HAPPENING
+					// advance the text
+                    
+                    
+                    ray = mainCamera.ScreenPointToRay(Input.mousePosition);
+                    
+                    
+                    if(Physics.Raycast(ray, out hit, 30))
+                    {
+                        Debug.Log(hit.transform.tag);
+                        
+                        if(hit.transform.tag == "NPC")
+                        {
+                            // display dialogue
+                        }
+                    }
+				} 
                 
 				if (mainMenuGroup.activeSelf) {
 					mainMenuGroup.SetActive (false);
@@ -97,28 +118,15 @@ public class GameManager : MonoBehaviour {
 				}
 
 				// INPUT HANDLERS-----------------------------------
-				if (Input.GetMouseButtonDown (0)) {	// AND ALSO CHECK DIALOGUE IS HAPPENING
-					// advance the text
-                    
-                    ray = mainCamera.ViewportPointToRay(new Vector3(.5f, .5f, .5f));
-                    
-                    Vector3 loc = mainCamera.transform.position;
-                    
-                    if(Physics.Raycast(mainCamera.transform.position, mainCamera.transform.forward, out hit))
-                    {
-                        if(hit.transform.gameObject.tag == "NPC")
-                        {
-                            Debug.Log("NPChit");
-                        }
-                    }
-				} 
+				
 
 				if (Input.GetKeyDown (KeyCode.P)) {
 					ChangeState (2);
 				}
 			}
 		} 
-		else if (currentState == GameState.pause) {
+        
+		if (currentState == GameState.pause) {
 			// Unpause - go back to last state
 			if (Input.GetKeyDown(KeyCode.P)) {
 				currentState = lastState;

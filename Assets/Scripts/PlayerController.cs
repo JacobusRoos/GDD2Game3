@@ -23,17 +23,17 @@ public class PlayerController : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-		if (Input.GetKey ("left")) {
+		if (Input.GetKey ("a")) {
 			this.transform.Rotate (Vector3.up * Time.deltaTime * -30, Space.World);
 		}
-		else if (Input.GetKey ("right")) {
+		else if (Input.GetKey ("d")) {
 			this.transform.Rotate (Vector3.up * Time.deltaTime * 30, Space.World);
 		}
 
-		if (Input.GetKey ("up")) {
+		if (Input.GetKey ("w")) {
 			this.transform.position += this.transform.forward * Time.deltaTime* 5;
 		}
-		else if (Input.GetKey ("down")) {
+		else if (Input.GetKey ("s")) {
 			this.transform.position -= this.transform.forward * Time.deltaTime* 5;
 		}
 	}
