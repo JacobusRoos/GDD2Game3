@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,8 +11,26 @@ public class NPC : MonoBehaviour {
     private int trust;
 
     private bool yeti;
+    
+    private bool[] predictionStates;
+    
+    private bool[] predictionsUsed;
+    
+    private bool[] smallUsed;
+    
+    private int givenPredictionNum;
+    
+    public int smallIndex;
+    public int trueIndex;
+    public int falseIndex;
+    
+    private int trustBuffer;
+    
+    const int trustModifier = 15;
+    
+    
 	public bool stopped;
-
+    
 	public List<GameObject> goals;
 	private float dist;
 	private GameObject currentGoal;
@@ -24,13 +42,26 @@ public class NPC : MonoBehaviour {
 
         dialogue = new Dialogue();
 
-        trust = 0;
+        trust = 20 + (int)(Random.value * 30) ;
 
+        predictionStates = new bool[dialogue.predNum];
+        
+        predictionsUsed = new bool[dialogue.predNum];
+        
+        smallUsed = new bool[dialogue.smallNum];
+        
+        givenPredictionNum = 0;
+        
+        trueIndex = -1;
+        falseIndex = -1;
+        
+        
 		stopped = false;
 		dist = 0;
 		tracker = 0;
-		currentGoal = goals [0];
-
+		currentGoal = goals[0];
+        
+        RandomizePredictions();
 	}
 	
 	// Update is called once per frame
@@ -58,6 +89,145 @@ public class NPC : MonoBehaviour {
 		}
 	}
 
+    
+    public void RandomizePredictions()
+    {
+        for(int i = 0; i < dialogue.predNum; i++)
+        {
+            predictionStates[i] = false;
+            predictionsUsed[i] = false;
+        }
+        
+        bool[] assigned = new bool[dialogue.predNum];
+        
+        for(int i = 0; i < dialogue.predNum / 2; i++)
+        {
+            int index = (int)(Random.value * (dialogue.predNum - 1));
+            
+            if(assigned[index])
+            {
+                i--;
+            }
+            else
+            {
+                predictionStates[index] = true;
+            }
+        }
+    }
+    
+    public void DisplayDialogueOptions()
+    {
+        bool trueFound = false;
+        bool falseFound = false;
+        
+        int r = 0;
+        
+        while((!trueFound || !falseFound) && givenPredictionNum < 3)
+        {
+            r = (int)(Random.value * (dialogue.predNum - 1));
+            
+            if(predictionStates[r] && !predictionsUsed[r])
+            {
+                trueFound = true;
+                trueIndex = r;
+            }
+            
+            if(!predictionStates[r] && !predictionsUsed[r])
+            {
+                falseFound = true;
+                falseIndex = r;
+            }
+        }
+        
+        smallIndex = (int)(Random.value * (dialogue.smallNum - 1));
+        
+        r = (int)(Random.value * (dialogue.smallNum - 1));
+        
+        while(!smallUsed[r])
+        {
+            smallUsed[r] = false;
+            smallIndex = r;
+        }
+        
+        
+        
+        //Todo: put dialogue in the UI here
+        
+        if(givenPredictionNum >= 3)
+        {
+            
+        }
+        else
+        {
+            
+        }
+        
+        //NOTE: please update predictionsUsed when a dialogue option is selected so the same one is not used multiple times
+        //also increment the givenPredictionNum
+    }
+    
+    public void NextDay()
+    {
+        RandomizePredictions();
+        
+        smallUsed = new bool[dialogue.smallNum];
+        
+        givenPredictionNum = 0;
+        
+        trust += trustBuffer;
+        
+        trustBuffer = 0;
+    }
+    
+    public void YetiPrediction()
+    {
+        if((int)(Random.value * 100) <= trust - 30)
+        {
+            yeti = true;
+        }
+        
+        if(yeti)
+        {
+            //UI place NPC response to yeti in UI
+        }
+        else
+        {
+            //UI place NPC response to yeti in UI
+        }
+    }
+    
+    public void TruePrediction()
+    {
+        
+        if((int)(Random.value * 100) <= trust)
+        {
+            trustBuffer += trustModifier;
+        }
+        else
+        {
+            trustBuffer += (int)(trustModifier * .75);
+        }
+    }
+    
+    public void FalsePrediction()
+    {
+        if((int)(Random.value * 100) <= trust)
+        {
+            trustBuffer -= (int)(trustModifier * .75);
+        }
+        else
+        {
+            trustBuffer -= trustModifier;
+        }
+    }
+    
+    public void SmallTalk()
+    {
+        trust += 4;
+        
+        //grab other small data using the smallIndex
+    }
+    
 	public void Interact(){
 		stopped = !stopped;
 	}

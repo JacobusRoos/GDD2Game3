@@ -1,14 +1,25 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour {
 
+    private Vector3 startLocation;
+    
+    private Vector3 startForward;
+    
 	// Use this for initialization
 	void Start () {
-		
+		startLocation = this.GetComponent<RectTransform>().position;
+        startForward = this.GetComponent<RectTransform>().forward;
 	}
 	
+    public void Reset()
+    {
+        this.GetComponent<RectTransform>().position = startLocation;
+        this.GetComponent<RectTransform>().forward = startForward;
+    }
+    
 	// Update is called once per frame
 	void Update () {
 
