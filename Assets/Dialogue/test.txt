@@ -1,12 +1,10 @@
+I
+Intro
 S
 Hello
 Test Hello
-T
+P
 Hello t
-true
-false
-F
-Hello f
 true
 false
 Y
