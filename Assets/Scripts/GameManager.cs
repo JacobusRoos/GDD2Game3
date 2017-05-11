@@ -27,16 +27,11 @@ public class GameManager : MonoBehaviour {
 	public GameObject playStateGroup;	
 	public GameObject textOptionsGroup;
 
-<<<<<<< HEAD
+
     public List<GameObject> NPCs;
     public GameObject player;
     
     private float timer;
-=======
-	public List<GameObject> NPCs;
-
-	private float timer;
->>>>>>> origin/UI-updates
 
     private float transitionTimer;
     
@@ -58,132 +53,143 @@ public class GameManager : MonoBehaviour {
 
 		timer = 300f;
 
-<<<<<<< HEAD
-        timer = 300f;
         
         transitionTimer = 5f;
         
-=======
 		// activate only mainmenu to start
->>>>>>> origin/UI-updates
+
 		mainMenuGroup.SetActive (true);
 		playStateGroup.SetActive (false);
 		textOptionsGroup.SetActive (false);
 	}
-	
-	// Update is called once per frame
-	void Update () {
-		if (currentState != GameState.pause) {		// Pretty much stop updating everything when paused
-            
-            
-			// States ------------------------------------------
-			// MAIN MENU STATE
-			if (currentState == GameState.mainmenu) {
-				// Set cooresponding canvas group to display
-				if (!mainMenuGroup.activeSelf) {
-					mainMenuGroup.SetActive (true);
-				}	
-				if (playStateGroup.activeSelf) {			
-					playStateGroup.SetActive (false);
-				}
 
-				// INPUT HANDLERS------------------------------------
+    // Update is called once per frame
+    void Update()
+    {
+        if (currentState != GameState.pause)
+        {       // Pretty much stop updating everything when paused
 
 
-			}
+            // States ------------------------------------------
+            // MAIN MENU STATE
+            if (currentState == GameState.mainmenu)
+            {
+                // Set cooresponding canvas group to display
+                if (!mainMenuGroup.activeSelf)
+                {
+                    mainMenuGroup.SetActive(true);
+                }
+                if (playStateGroup.activeSelf)
+                {
+                    playStateGroup.SetActive(false);
+                }
 
-			// PLAY STATE
-<<<<<<< HEAD
-			if (currentState == GameState.play) {
-                
+                // INPUT HANDLERS------------------------------------
+
+
+            }
+
+            // PLAY STATE
+
+            if (currentState == GameState.play)
+            {
+
                 timer -= Time.deltaTime;
-                
-                
+
+
                 //update UI timer
-                
-                if(timer <= 0)
+
+                if (timer <= 0)
                 {
                     NextDay();
                 }
-                
-                if (Input.GetMouseButtonDown(0)) {	// AND ALSO CHECK DIALOGUE IS HAPPENING
-					// advance the text
-                    
-                    
+
+                if (Input.GetMouseButtonDown(0))
+                {   // AND ALSO CHECK DIALOGUE IS HAPPENING
+                    // advance the text
+
+
                     ray = mainCamera.ScreenPointToRay(Input.mousePosition);
-                    
-                    
-                    if(Physics.Raycast(ray, out hit, 30))
+
+
+                    if (Physics.Raycast(ray, out hit, 30))
                     {
                         Debug.Log(hit.transform.tag);
-                        
-                        if(hit.transform.tag == "NPC")
+
+                        if (hit.transform.tag == "NPC")
                         {
                             // display dialogue
                         }
                     }
-				} 
-                
-=======
-			else if (currentState == GameState.play) {
+                }
 
-				timer -= Time.deltaTime;
+                else if (currentState == GameState.play)
+                {
 
-				//update UI timer
-				if(timer <= 0)
-				{
-					NextDay();
-				}
+                    timer -= Time.deltaTime;
+
+                    //update UI timer
+                    if (timer <= 0)
+                    {
+                        NextDay();
+                    }
 
 
->>>>>>> origin/UI-updates
-				if (mainMenuGroup.activeSelf) {
-					mainMenuGroup.SetActive (false);
-				}
+                    if (mainMenuGroup.activeSelf)
+                    {
+                        mainMenuGroup.SetActive(false);
+                    }
 
-				if (!playStateGroup.activeSelf) {
-					playStateGroup.SetActive (true);
-				}
+                    if (!playStateGroup.activeSelf)
+                    {
+                        playStateGroup.SetActive(true);
+                    }
 
-				// INPUT HANDLERS-----------------------------------
-				
+                    // INPUT HANDLERS-----------------------------------
 
-				if (Input.GetKeyDown (KeyCode.P)) {
-					ChangeState (2);
-				}
 
-				// DO RAYCASTING AND DIALOGUE TRIGGERING HERE
-			}
-		} 
-        
-		if (currentState == GameState.pause) {
-			// Unpause - go back to last state
-			if (Input.GetKeyDown(KeyCode.P)) {
-				ChangeState(1);	// default to play 
-			}
-		}
+                    if (Input.GetKeyDown(KeyCode.P))
+                    {
+                        ChangeState(2);
+                    }
 
-        
-        if(currentState == GameState.transition)
-        {
-            transitionTimer--;
-            
-            //enable transition UI
-            
-            if(transitionTimer <= 0)
-            {
-                currentState = GameState.play;
+                    // DO RAYCASTING AND DIALOGUE TRIGGERING HERE
+                }
             }
+
+            if (currentState == GameState.pause)
+            {
+                // Unpause - go back to last state
+                if (Input.GetKeyDown(KeyCode.P))
+                {
+                    ChangeState(1); // default to play 
+                }
+            }
+
+
+            if (currentState == GameState.transition)
+            {
+                transitionTimer--;
+
+                //enable transition UI
+
+                if (transitionTimer <= 0)
+                {
+                    currentState = GameState.play;
+                }
+            }
+
+            // Debug: catch state change
+            if (lastState != currentState)
+            {
+                Debug.Log("State changed to: " + currentState);
+            }
+
+            lastState = currentState;
+
         }
+    }
 
-		// Debug: catch state change
-		if (lastState != currentState) {
-			Debug.Log ("State changed to: " + currentState);
-		}
-
-		lastState = currentState;
-	}
-<<<<<<< HEAD
     
     private void NextDay()
     {
@@ -198,18 +204,7 @@ public class GameManager : MonoBehaviour {
         
         currentState = GameState.transition;
     }
-=======
 
-	private void NextDay()
-	{
-		for(int i = 0; i < NPCs.Count; i++)
-		{
-			NPCs[i].GetComponent<NPC>().NextDay();
-		}
-
-		timer = 300f;
-	}
->>>>>>> origin/UI-updates
 
 	// helper function to change state
 	public void ChangeState(int id) {
