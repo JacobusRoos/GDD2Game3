@@ -216,8 +216,8 @@ public class NPC : MonoBehaviour {
             textOptionsGroup.transform.GetChild(0).gameObject.SetActive(true);
             textOptionsGroup.transform.GetChild(1).gameObject.SetActive(true);
 
-            textOptionsGroup.transform.GetChild(0).GetChild(0).GetComponent<Text>().text = dialogue.convDictionary["P" + trueIndex.ToString()].Key;
-            textOptionsGroup.transform.GetChild(1).GetChild(0).GetComponent<Text>().text = dialogue.convDictionary["P" + falseIndex.ToString()].Key;
+            textOptionsGroup.transform.GetChild(0).GetChild(0).GetComponent<Text>().text = "Truth: " + dialogue.convDictionary["P" + trueIndex.ToString()].Key;
+            textOptionsGroup.transform.GetChild(1).GetChild(0).GetComponent<Text>().text = "Lie: " + dialogue.convDictionary["P" + falseIndex.ToString()].Key;
             textOptionsGroup.transform.GetChild(3).GetChild(0).GetComponent<Text>().text = dialogue.convDictionary["Y" + 0].Key;
         }
 
