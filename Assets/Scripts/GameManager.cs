@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+
 /// <summary>
 /// Game Manager instantiated on a GameManager Object in MainMenu scene. 
 /// ****Make sure to start game from MainMenu scene.
@@ -11,6 +13,7 @@ public class GameManager : MonoBehaviour {
 		mainmenu, 
 		play, 
 		pause,
+        dialogue,
 		transition,
 		results
 	};
@@ -26,6 +29,7 @@ public class GameManager : MonoBehaviour {
 	public GameObject mainMenuGroup;
 	public GameObject playStateGroup;	
 	public GameObject textOptionsGroup;
+    public GameObject transitionGroup;
 
 
     public List<GameObject> NPCs;
@@ -42,26 +46,35 @@ public class GameManager : MonoBehaviour {
     private RaycastHit hit;
     
     public Camera mainCamera;
-    
+
+    public bool endDialogue;
+
+    public GameObject timerOBJ;
+
+    private int day;
 
 	// Use this for initialization
 	void Start () {
-		currentState = GameState.play;
+		currentState = GameState.mainmenu;
 
 		//mainCanvas = GameObject.Find ("MainCanvas");
 		//mainEventSystem = GameObject.Find ("MainEventSystem");
 
-		timer = 300f;
+		timer = 180f;
 
-        
         transitionTimer = 5f;
+
+        day = 1;
         
 		// activate only mainmenu to start
 
 		mainMenuGroup.SetActive (true);
 		playStateGroup.SetActive (false);
 		textOptionsGroup.SetActive (false);
-	}
+
+        endDialogue = false;
+
+    }
 
     // Update is called once per frame
     void Update()
@@ -69,6 +82,7 @@ public class GameManager : MonoBehaviour {
         if (currentState != GameState.pause)
         {       // Pretty much stop updating everything when paused
 
+            
 
             // States ------------------------------------------
             // MAIN MENU STATE
@@ -91,49 +105,45 @@ public class GameManager : MonoBehaviour {
 
             // PLAY STATE
 
-            if (currentState == GameState.play)
+            else if (currentState == GameState.play)
             {
-
                 timer -= Time.deltaTime;
 
-
-                //update UI timer
+                SetTimer();
 
                 if (timer <= 0)
                 {
                     NextDay();
                 }
 
-                if (Input.GetMouseButtonDown(0))
-                {   // AND ALSO CHECK DIALOGUE IS HAPPENING
-                    // advance the text
 
-
-                    ray = mainCamera.ScreenPointToRay(Input.mousePosition);
-
-
-                    if (Physics.Raycast(ray, out hit, 30))
+                if (currentState == GameState.play)
+                {
+                    if (Input.GetMouseButtonDown(0))
                     {
-                        Debug.Log(hit.transform.tag);
+                        ray = mainCamera.ScreenPointToRay(Input.mousePosition);
 
-                        if (hit.transform.tag == "NPC")
+
+                        if (Physics.Raycast(ray, out hit, 70))
                         {
-                            // display dialogue
+                            //Debug.Log(hit.transform.tag);
+
+                            if (hit.transform.tag == "NPC")
+                            {
+                                player.GetComponent<PlayerController>().canMove = false;
+
+                                hit.transform.gameObject.GetComponent<NPC>().Interact();
+
+                                hit.transform.gameObject.GetComponent<NPC>().DisplayDialogueOptions();
+
+                                SelectedNPC = hit.transform.gameObject;
+
+                                textOptionsGroup.transform.GetChild(4).GetComponent<Text>().text = "Trust: " + SelectedNPC.GetComponent<NPC>().trust.ToString();
+
+                                currentState = GameState.dialogue;
+                            }
                         }
                     }
-                }
-
-                else if (currentState == GameState.play)
-                {
-
-                    timer -= Time.deltaTime;
-
-                    //update UI timer
-                    if (timer <= 0)
-                    {
-                        NextDay();
-                    }
-
 
                     if (mainMenuGroup.activeSelf)
                     {
@@ -145,19 +155,43 @@ public class GameManager : MonoBehaviour {
                         playStateGroup.SetActive(true);
                     }
 
-                    // INPUT HANDLERS-----------------------------------
-
-
                     if (Input.GetKeyDown(KeyCode.P))
                     {
                         ChangeState(2);
                     }
 
-                    // DO RAYCASTING AND DIALOGUE TRIGGERING HERE
                 }
             }
 
-            if (currentState == GameState.pause)
+            else if(currentState == GameState.dialogue)
+            {
+                timer -= Time.deltaTime;
+
+                SetTimer();
+
+                if (timer <= 0)
+                {
+                    NextDay();
+                }
+
+                if (endDialogue)
+                {
+                    if (Input.GetMouseButtonDown(0))
+                    {
+                        endDialogue = false;
+
+                        playStateGroup.transform.GetChild(0).GetComponent<Text>().text = "";
+
+                        player.GetComponent<PlayerController>().canMove = true;
+
+                        SelectedNPC.GetComponent<NPC>().Interact();
+
+                        currentState = GameState.play;
+                    }
+                }
+            }
+
+            else if (currentState == GameState.pause)
             {
                 // Unpause - go back to last state
                 if (Input.GetKeyDown(KeyCode.P))
@@ -167,22 +201,22 @@ public class GameManager : MonoBehaviour {
             }
 
 
-            if (currentState == GameState.transition)
+            else if (currentState == GameState.transition)
             {
-                transitionTimer--;
+                transitionTimer -= Time.deltaTime;
 
                 //enable transition UI
 
                 if (transitionTimer <= 0)
                 {
-                    currentState = GameState.play;
+                    StartDay();
                 }
             }
 
             // Debug: catch state change
             if (lastState != currentState)
             {
-                Debug.Log("State changed to: " + currentState);
+                //Debug.Log("State changed to: " + currentState);
             }
 
             lastState = currentState;
@@ -199,12 +233,36 @@ public class GameManager : MonoBehaviour {
         }
         
         player.GetComponent<PlayerController>().Reset();
-        
-        timer = 300f;
+
+        player.GetComponent<PlayerController>().canMove = false;
+
+        timer = 180f;
         
         currentState = GameState.transition;
+
+        playStateGroup.SetActive(false);
+        textOptionsGroup.SetActive(false);
+
+        transitionGroup.SetActive(true);
+
+        day++;
+
+        transitionGroup.transform.GetChild(1).GetComponent<Text>().text = "Day " + day;
     }
 
+    private void StartDay()
+    {
+        for (int i = 0; i < NPCs.Count; i++)
+        {
+            NPCs[i].GetComponent<NPC>().Interact();
+        }
+
+        player.GetComponent<PlayerController>().canMove = true;
+
+        transitionGroup.SetActive(false);
+
+        currentState = GameState.play;
+    }
 
 	// helper function to change state
 	public void ChangeState(int id) {
@@ -220,8 +278,97 @@ public class GameManager : MonoBehaviour {
 			break;
 		}
 	}
-		
-	public void Quit() {
+
+    public void StartGame()
+    {
+        ChangeState(1);
+
+        player.GetComponent<PlayerController>().canMove = true;
+
+        foreach(GameObject n in NPCs)
+        {
+            n.GetComponent<NPC>().stopped = false;
+        }
+    }
+
+    public void DisplayDialogue()
+    {
+        currentState = GameState.dialogue;
+
+        textOptionsGroup.SetActive(true);
+    }
+
+    public void NPCTruth()
+    {
+        textOptionsGroup.SetActive(false);
+
+        playStateGroup.SetActive(true);
+
+        SelectedNPC.GetComponent<NPC>().TruePrediction();
+
+        endDialogue = true;
+    }
+
+    public void NPCLie()
+    {
+        textOptionsGroup.SetActive(false);
+
+        playStateGroup.SetActive(true);
+
+        SelectedNPC.GetComponent<NPC>().FalsePrediction();
+
+        endDialogue = true;
+    }
+
+    public void NPCSmall()
+    {
+        textOptionsGroup.SetActive(false);
+
+        playStateGroup.SetActive(true);
+
+        SelectedNPC.GetComponent<NPC>().SmallTalk();
+
+        endDialogue = true;
+    }
+
+    public void NPCYeti()
+    {
+        textOptionsGroup.SetActive(false);
+
+        playStateGroup.SetActive(true);
+
+        SelectedNPC.GetComponent<NPC>().YetiPrediction();
+
+        endDialogue = true;
+    }
+
+    public void CloseDialogue()
+    {
+
+        textOptionsGroup.SetActive(false);
+
+        playStateGroup.transform.GetChild(0).GetComponent<Text>().text = "";
+
+        player.gameObject.GetComponent<PlayerController>().canMove = true;
+
+        SelectedNPC.GetComponent<NPC>().Interact();
+
+        currentState = GameState.play;
+    }
+
+    public void SetTimer()
+    {
+        if((int)(timer % 60) < 10)
+        {
+            timerOBJ.GetComponent<Text>().text = (int)(timer / 60) + ":0" + (int)(timer % 60);
+        }
+        else
+        {
+            timerOBJ.GetComponent<Text>().text = (int)(timer / 60) + ":" + (int)(timer % 60);
+        }
+    }
+
+    public void Quit() {
 		Application.Quit ();
 	}
 
