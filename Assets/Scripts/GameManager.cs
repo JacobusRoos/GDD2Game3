@@ -140,7 +140,7 @@ public class GameManager : MonoBehaviour {
 
                                 textOptionsGroup.transform.GetChild(4).GetComponent<Text>().text = "Trust: " + SelectedNPC.GetComponent<NPC>().trust.ToString();
 
-                                currentState = GameState.dialogue;
+                                //currentState = GameState.dialogue;
                             }
                         }
                     }
