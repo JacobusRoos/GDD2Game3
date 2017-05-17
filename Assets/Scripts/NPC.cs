@@ -11,7 +11,7 @@ public class NPC : MonoBehaviour {
 
     public int trust;
 
-    private bool yeti;
+    public bool yeti;
     private bool yetiAttempt;
     
     private bool[] predictionStates;

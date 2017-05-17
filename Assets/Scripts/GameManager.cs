@@ -30,6 +30,7 @@ public class GameManager : MonoBehaviour {
 	public GameObject playStateGroup;	
 	public GameObject textOptionsGroup;
     public GameObject transitionGroup;
+    public GameObject resultsGroup;
 
 
     public List<GameObject> NPCs;
@@ -75,6 +76,7 @@ public class GameManager : MonoBehaviour {
         mainMenuGroup.SetActive (true);
 		playStateGroup.SetActive (false);
 		textOptionsGroup.SetActive (false);
+        resultsGroup.SetActive(false);
 
         endDialogue = false;
 
@@ -219,6 +221,11 @@ public class GameManager : MonoBehaviour {
                 }
             }
 
+            else if(currentState == GameState.results)
+            {
+
+            }
+
             // Debug: catch state change
             if (lastState != currentState)
             {
@@ -258,18 +265,38 @@ public class GameManager : MonoBehaviour {
 
     private void StartDay()
     {
-        for (int i = 0; i < NPCs.Count; i++)
+        if (day < 4)
         {
-            NPCs[i].GetComponent<NPC>().Interact();
+
+
+            for (int i = 0; i < NPCs.Count; i++)
+            {
+                NPCs[i].GetComponent<NPC>().Interact();
+            }
+
+            player.GetComponent<PlayerController>().canMove = true;
+
+            transitionGroup.SetActive(false);
+
+            currentState = GameState.play;
+
+            transitionTimer = 5;
         }
 
-        player.GetComponent<PlayerController>().canMove = true;
+        else
+        {
+            currentState = GameState.results;
 
-        transitionGroup.SetActive(false);
+            foreach (GameObject n in NPCs)
+            {
+                if(n.GetComponent<NPC>().yeti)
+                {
+                    resultsGroup.transform.GetChild(2).GetComponent<Text>().text += "The " + n.GetComponent<NPC>().NPCName;
+                }
+            }
 
-        currentState = GameState.play;
-
-        transitionTimer = 5;
+            resultsGroup.SetActive(true);
+        }
     }
 
 	// helper function to change state
@@ -420,8 +447,6 @@ public class GameManager : MonoBehaviour {
         int lieValue = (int)(Random.value * 100f);
 
         return lieValue < liePercent;
-
-        return true;
     }
 
     public void SetTimer()
@@ -437,7 +462,7 @@ public class GameManager : MonoBehaviour {
     }
 
     public void Quit() {
-		Application.Quit ();
+		Application.Quit();
 	}
 
 }
