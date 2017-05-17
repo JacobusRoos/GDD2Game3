@@ -53,6 +53,8 @@ public class GameManager : MonoBehaviour {
 
     private int day;
 
+    private float liePercent;
+
 	// Use this for initialization
 	void Start () {
 		currentState = GameState.mainmenu;
@@ -65,10 +67,12 @@ public class GameManager : MonoBehaviour {
         transitionTimer = 5f;
 
         day = 1;
-        
-		// activate only mainmenu to start
 
-		mainMenuGroup.SetActive (true);
+        liePercent = 0;
+
+        // activate only mainmenu to start
+
+        mainMenuGroup.SetActive (true);
 		playStateGroup.SetActive (false);
 		textOptionsGroup.SetActive (false);
 
@@ -139,6 +143,8 @@ public class GameManager : MonoBehaviour {
                                 SelectedNPC = hit.transform.gameObject;
 
                                 textOptionsGroup.transform.GetChild(4).GetComponent<Text>().text = "Trust: " + SelectedNPC.GetComponent<NPC>().trust.ToString();
+
+                                textOptionsGroup.transform.GetChild(5).GetComponent<Text>().text = "Lie Potential: " + liePercent.ToString() + "%";
 
                                 //currentState = GameState.dialogue;
                             }
@@ -225,7 +231,7 @@ public class GameManager : MonoBehaviour {
     }
 
     
-    private void NextDay()
+    public void NextDay()
     {
         for(int i = 0; i < NPCs.Count; i++)
         {
@@ -262,6 +268,8 @@ public class GameManager : MonoBehaviour {
         transitionGroup.SetActive(false);
 
         currentState = GameState.play;
+
+        transitionTimer = 5;
     }
 
 	// helper function to change state
@@ -304,7 +312,23 @@ public class GameManager : MonoBehaviour {
 
         playStateGroup.SetActive(true);
 
-        SelectedNPC.GetComponent<NPC>().TruePrediction();
+
+        if(CalculateLie())
+        {
+            playStateGroup.transform.GetChild(0).GetComponent<Text>().color = UnityEngine.Color.red;
+
+            SelectedNPC.GetComponent<NPC>().FalsePrediction();
+
+            DecreaseLie();
+        }
+        else
+        {
+            playStateGroup.transform.GetChild(0).GetComponent<Text>().color = UnityEngine.Color.black;
+
+            SelectedNPC.GetComponent<NPC>().TruePrediction();
+
+            IncreaseLie();
+        }
 
         endDialogue = true;
     }
@@ -315,7 +339,11 @@ public class GameManager : MonoBehaviour {
 
         playStateGroup.SetActive(true);
 
+        playStateGroup.transform.GetChild(0).GetComponent<Text>().color = UnityEngine.Color.black;
+
         SelectedNPC.GetComponent<NPC>().FalsePrediction();
+
+        ResetLie();
 
         endDialogue = true;
     }
@@ -325,6 +353,8 @@ public class GameManager : MonoBehaviour {
         textOptionsGroup.SetActive(false);
 
         playStateGroup.SetActive(true);
+
+        playStateGroup.transform.GetChild(0).GetComponent<Text>().color = UnityEngine.Color.black;
 
         SelectedNPC.GetComponent<NPC>().SmallTalk();
 
@@ -336,6 +366,8 @@ public class GameManager : MonoBehaviour {
         textOptionsGroup.SetActive(false);
 
         playStateGroup.SetActive(true);
+
+        playStateGroup.transform.GetChild(0).GetComponent<Text>().color = UnityEngine.Color.black;
 
         SelectedNPC.GetComponent<NPC>().YetiPrediction();
 
@@ -354,6 +386,42 @@ public class GameManager : MonoBehaviour {
         SelectedNPC.GetComponent<NPC>().Interact();
 
         currentState = GameState.play;
+    }
+
+    public void IncreaseLie()
+    {
+        if(liePercent == 0)
+        {
+            liePercent += 5;
+        }
+        else
+        {
+            liePercent *= 2;
+        }
+    }
+
+    public void ResetLie()
+    {
+        liePercent = 0;
+    }
+
+    public void DecreaseLie()
+    {
+        liePercent -= 25;
+
+        if(liePercent < 0)
+        {
+            liePercent = 0;
+        }
+    }
+
+    public bool CalculateLie()
+    {
+        int lieValue = (int)(Random.value * 100f);
+
+        return lieValue < liePercent;
+
+        return true;
     }
 
     public void SetTimer()
